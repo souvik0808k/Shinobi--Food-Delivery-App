@@ -105,6 +105,110 @@ npm run dev
 
 The frontend will run on `http://localhost:5173`
 
+## 🌐 Deployment
+
+### Backend Deployment (Render)
+
+1. **Create a new Web Service** on [Render](https://render.com)
+
+2. **Connect your GitHub repository**
+
+3. **Configure the service:**
+   - **Root Directory**: `Backend`
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+   - **Environment**: `Node`
+
+4. **Add Environment Variables** in Render dashboard:
+   ```
+   PORT=8000
+   MONGODB_URL=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   EMAIL_USER=your_email@gmail.com
+   EMAIL_PASS=your_email_app_password
+   ```
+
+5. **Deploy** - Render will automatically build and deploy
+
+### Frontend Deployment (Vercel)
+
+#### Method 1: Deploy from GitHub (Recommended)
+
+1. **Import your repository** on [Vercel](https://vercel.com)
+
+2. **IMPORTANT: Configure Root Directory**
+   - In Vercel dashboard, go to **Project Settings**
+   - Under **General** → **Root Directory**
+   - Set to: `Frontend`
+   - Click **Save**
+
+3. **Framework Preset**: Should auto-detect as **Vite**
+
+4. **Build Settings** (auto-configured via vercel.json):
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+   - Install Command: `npm install`
+
+5. **Add Environment Variables**:
+   - Go to **Settings** → **Environment Variables**
+   - Add:
+     ```
+     VITE_FIREBASE_API_KEY=your_firebase_api_key
+     VITE_GEOAPIFY_API_KEY=your_geoapify_api_key
+     ```
+   - **Note about the warning**: Vercel will warn that `VITE_` prefixed variables with `KEY` might expose sensitive info. **This is expected and safe**:
+     - Firebase API keys are designed to be public (secured by domain restrictions in Firebase Console)
+     - Geoapify API keys are designed to be public (secured by domain/referrer restrictions)
+     - All VITE_ variables are client-side by design
+
+6. **Deploy** - Click "Deploy" and wait for completion
+
+#### Method 2: Manual CLI Deployment
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Navigate to Frontend folder
+cd Frontend
+
+# Deploy
+vercel
+
+# Follow prompts and configure as above
+```
+
+### Connecting Frontend to Backend
+
+After deploying both:
+
+1. **Get your Render backend URL** (e.g., `https://your-app.onrender.com`)
+
+2. **Update Frontend API base URL**:
+   - In your deployed Vercel project, go to **Settings** → **Environment Variables**
+   - Add a new variable:
+     ```
+     VITE_API_URL=https://your-app.onrender.com
+     ```
+
+3. **Update Backend CORS**:
+   - In Render, add environment variable:
+     ```
+     FRONTEND_URL=https://your-app.vercel.app
+     ```
+
+4. **Redeploy both** services to apply changes
+
+### Troubleshooting Vercel 404 Errors
+
+If you see `404: NOT_FOUND` errors on Vercel:
+
+1. ✅ **Check Root Directory is set to `Frontend`** (most common issue)
+2. ✅ Verify `vercel.json` exists in Frontend folder
+3. ✅ Check build logs for errors
+4. ✅ Ensure environment variables are set correctly
+5. ✅ Try manual redeployment: **Deployments** → **⋯** → **Redeploy**
+
 ## 📱 User Roles
 
 ### 1. **Customer (user)**
